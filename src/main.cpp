@@ -1,35 +1,3 @@
-/**
- * e-mail : openprogramming23@gmail.com
- * gitHub : https://github.com/RS-malik-el
- * Donation : paypal.me/RachelSysteme
- *
- * @AUTEUR : Exaucé KIMBEMBE / @OpenProgramming
- * DATE    : 09/05/2023
- *
- * @Bibliothèques nécessaires pour réaliser ce projet:
- * *** https://github.com/me-no-dev/ESPAsyncWebServer
- * *** https://github.com/me-no-dev/AsyncTCP
- * 
- *@Plugin : extension a installer sur l'IDE arduino pour le transfert des fichiers dans la
- * mémoire flash.
- * *** https://github.com/me-no-dev/arduino-esp32fs-plugin/releases/  
- * 
- * @Board : ESP32
- * 
- * Ce code permet de contrôler une LED en utilisant une page web.
- * Si l'ESP32 est connecté à un réseau WiFi, la LED intégrée à l'ESP32 clignote régulièrement 
- * pour indiquer que la connexion est active. Si la connexion est perdue, l'ESP32 tente de se 
- * reconnecter automatiquement. 
- * 
- * Le code est composé de plusieurs fichiers, 
- * *** Un fichier HTML qui contient la page web, 
- * *** Un fichier CSS pour la mise en forme, 
- * *** Un fichier JavaScript pour la gestion des événements
- * *** Deux photos qui sont utilisées comme images de fond.
- * 
-*/
-
-
 // Interruption de la compilation si la carte ESP32 n'est pas sélectionné
 #ifndef ESP32
   #error "Veillez selectionner une carte ESP32"
@@ -48,34 +16,30 @@ AsyncWebServer server(80);// Crée un objet de serveur web sur le port 80
 
 // pin utilisé
 #define BUZZER_PIN 15 // Pin GPIO à laquelle le buzzer est connecté
-#define LEDR_PIN 2 // Pin GPIO à laquelle le buzzer est connecté
-#define LEDV_PIN 4 // Pin GPIO à laquelle le buzzer est connecté
-#define LEDB_PIN 22 // Pin GPIO à laquelle le buzzer est connecté
+#define LEDR_PIN 2 // Pin GPIO à laquelle la led Rouge est connecté
+#define LEDV_PIN 4 // Pin GPIO à laquelle la led Verte est connecté
+#define LEDB_PIN 22 // Pin GPIO à laquelle la led Bleu est connecté
 
 // Prototype
 void blink(void); // Indique que l'esp32 est en mode AP_STA
-void refusAcces(); // Indique que l'esp32 est en mode AP_STA
-void autorisationAcces(); // Indique que l'esp32 est en mode AP_STA
+void refusAcces(); 
+void autorisationAcces();
 
 double stepsPerRevolution = 2048;
-int i=0;
-int j=0;
-
 
 
 Stepper myStepper1(stepsPerRevolution,  21, 19, 18, 5);   // Pin inversion to make the library work
 Stepper myStepper2(stepsPerRevolution,  26, 27, 14, 12);  // Pin inversion to make the library work
 
-  
 
 
 void setup() {
   Serial.begin(115200);          // Initialisation de la communication série
-  pinMode(LEDB_PIN, OUTPUT);      // Définit la broche LED comme une sortie
-  pinMode(BUZZER_PIN, OUTPUT); // Définir la broche du buzzer comme sortie
-  pinMode(LEDR_PIN, OUTPUT); // Définir la broche du buzzer comme sortie
-  pinMode(LEDV_PIN, OUTPUT); // Définir la broche du buzzer comme sortie
-  pinMode(LEDB_PIN, OUTPUT); // Définir la broche du buzzer comme sortie
+  pinMode(LEDB_PIN, OUTPUT);  
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LEDR_PIN, OUTPUT);
+  pinMode(LEDV_PIN, OUTPUT); 
+  pinMode(LEDB_PIN, OUTPUT); 
   digitalWrite(LEDB_PIN, LOW);    // Éteint la LED au démarrage
   myStepper1.setSpeed(10);   
   myStepper2.setSpeed(10);   
@@ -133,7 +97,7 @@ void setup() {
   });
 
 
-  //----------- BNZRAI
+  //----------- Requete controle moteur
  
  server.on("/1d", HTTP_GET, [](AsyncWebServerRequest *request){
   
@@ -149,47 +113,14 @@ void setup() {
     request->send(200);
 });
 
-/**server.on("/2d", HTTP_GET, [](AsyncWebServerRequest *request){
-    
-    
-    myStepper1.step(stepsPerRevolution/3);   
-    delay(2000); 
-    autorisationAcces();
-    request->send(200);
-});
-server.on("/2t", HTTP_GET, [](AsyncWebServerRequest *request){
-    
-    myStepper1.step(stepsPerRevolution/3);   
-    delay(2000); 
-    autorisationAcces();
-    request->send(200);
-
-});
-
-server.on("/3d", HTTP_GET, [](AsyncWebServerRequest *request){
-    
-    
-    myStepper1.step(stepsPerRevolution/3);   
-    delay(2000); 
-    autorisationAcces();
-    request->send(200);
-});
-server.on("/3t", HTTP_GET, [](AsyncWebServerRequest *request){
-    
-    myStepper1.step(stepsPerRevolution/3);   
-    delay(2000); 
-    autorisationAcces();
-    request->send(200);
-});**/
-
-  
-
-  //----------- banzrai
+  //----------- Requete Medicament réfusé
   server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request){
     
       refusAcces();
       request->send(200);
   });  
+
+    //----------- Requete patient à faire une demande
 
    server.on("/p", HTTP_GET, [](AsyncWebServerRequest *request){
       digitalWrite(LEDB_PIN, HIGH);
@@ -206,12 +137,6 @@ void loop(){
   else{
     WiFi.reconnect(); 
   }  
-
-
-  
-
-
-
   
 
 }
@@ -229,8 +154,8 @@ void blink(void){
 
 void refusAcces() {
   // Émettre trois bips pour signifier le refus
-  digitalWrite(LEDB_PIN, 0); // Fréquence du son pour l'autorisation
-  digitalWrite(LEDR_PIN, 1); // Fréquence du son pour l'autorisation
+  digitalWrite(LEDB_PIN, 0); 
+  digitalWrite(LEDR_PIN, 1);
 
   for (int i = 0; i < 3; i++) {
     digitalWrite(BUZZER_PIN, 1); // Fréquence du son pour le refus
@@ -238,15 +163,14 @@ void refusAcces() {
    digitalWrite(BUZZER_PIN, 0); // Arrêter le son pendant un court instant
     delay(100); // Attendre avant le prochain bip
   }
-
-    digitalWrite(LEDR_PIN, 0); // Fréquence du son pour l'autorisation
+    digitalWrite(LEDR_PIN, 0);
 
 }
 
 void autorisationAcces() {
   // Émettre un son pour signifier l'autorisation
-  digitalWrite(LEDB_PIN, 0); // Fréquence du son pour l'autorisation
-  digitalWrite(LEDV_PIN, 1); // Fréquence du son pour l'autorisation
+  digitalWrite(LEDB_PIN, 0); 
+  digitalWrite(LEDV_PIN, 1);
   digitalWrite(BUZZER_PIN, 1); // Fréquence du son pour l'autorisation
   delay(2000); // Émettre le son pendant 1 seconde
   digitalWrite(BUZZER_PIN, 0) ;// Arrêter le son
