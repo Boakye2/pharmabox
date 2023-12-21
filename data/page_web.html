@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PharmaBox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link rel="stylesheet" type="text/css" href="styles.css">-->
+</head>
+<body>
+    <header>
+        <h1>PharmaBox</h1>
+        <span id="user-welcome"></span>
+        <button id="logout-button" onclick="deconnecter()">Deconnecter</button>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f0f0f0;
+            }
+    
+            header {
+                background-color: #41981c;
+                color: #fff;
+                text-align: center;
+                padding: 20px;
+            }
+
+            nav ul {
+                list-style: none;
+                text-align: center;
+            }
+    
+            nav li {
+                display: inline;
+                margin-right: 20px;
+            }
+
+            nav a {
+                text-decoration: none;
+                color: #41981c;
+                padding: 5px;
+                border-radius: 5px;
+            }
+    
+            #login-container {
+                display: block; 
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                padding: 20px;
+                text-align: center;
+            }
+    
+            #login-container h1 {
+                margin: 0;
+                color: #333;
+            }
+    
+            #login-container form {
+                display: flex;
+                flex-direction: column;
+            }
+    
+            #login-container label {
+                margin: 10px 0;
+            }
+    
+            #login-container input {
+                padding: 10px;
+                margin: 5px 0;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                font-size: 16px;
+            }
+    
+            #login-container button {
+                background-color: #ffd700;
+                color: #fff;
+                padding: 10px;
+                border: none;
+                border-radius: 3px;
+                cursor: pointer;
+                font-size: 18px;
+            }
+    
+            #login-container button:hover {
+                background-color: #ffef00;
+            }
+
+            .login-container-outer {
+                max-width: 400px; 
+                margin: 30px auto;
+            }
+                
+            #home-content {
+                display: none; /* Por defecto oculto */
+            }
+    
+            #home-content .menu {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px; 
+                margin: 20px;
+            }
+    
+            #home-content .med {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+                background: white;
+            }
+    
+            #home-content .med h2 {
+                margin: 10px; 
+            }
+    
+            #home-content .med img {
+                width: auto;
+                height: 100px;
+                margin: 10px; 
+            }
+    
+            #home-content .med p {
+                margin: 10px; 
+            }
+    
+            #home-content #add {
+                margin: 10px; 
+                align-self: flex-start;
+            }
+
+          
+            #user-welcome .numChambre {
+                margin-left: 83px;
+            }
+
+            .counter {
+                display: inline-block;
+                gap: 10px;
+                margin-left: 10px;
+                background-color: #ffd700; 
+                color: #fff; 
+                border-radius: 5px;
+                margin-top: 5px; 
+                padding: 5px 10px;
+            }
+
+            footer {
+                background-color: #41981c;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+            }
+
+            .buttons{
+                display: flex;
+                flex-direction: column;
+                width: 100px;
+            }
+
+            .buttons #reset-counters{
+                align-items: center;
+                margin: 5px auto;
+            }
+
+            #admin-content {
+                text-align: center;
+                margin: 20px;
+            }
+        
+            #user-list li{
+                list-style-type: none;
+                padding: 3px;
+            }
+
+            #no-demands-message {
+                background-color: #fff;
+                padding: 20px;
+                border: 1px solid #ccc;
+                text-align: center;
+                display: none; 
+            }
+            
+        
+            .user-item {
+                border: 1px solid #ccc;
+                margin: 10px;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #fff;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+            }
+
+            .user-item .reject-button:hover {
+                background-color: #E00000;
+            }        
+        
+            .user-item .accept-button:hover {
+                background-color: #45a049;
+            } 
+        
+            .user-item .accept-button {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 14px;
+                border-radius: 3px;
+                cursor: pointer;
+                margin-right: 4px;
+                
+            }
+        
+            .user-item .reject-button {
+                background-color: #ff0000; /* Color de fondo para el boton de rechazo */
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 14px;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+        
+            #logout-button {
+                display: none;
+                border: none;
+                background-color: #ffd700;
+                color: black;
+                text-decoration: none;
+                float: right;
+                border-radius: 5px;
+            }
+
+            #logout-button:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+
+            #command-content {
+                text-align: center;
+                margin: 20px;
+            }
+            
+            #user-medicament-list {
+                list-style-type: none;
+                padding: 0;
+            }
+            
+            #user-medicament-list li {
+                border: 1px solid #ccc;
+                margin: 10px;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #fff;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            #patient-list{
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            #patient-list .user-list{
+                background-color: #fff
+            }
+
+            table {
+                border-collapse: collapse;
+                width: auto;
+                margin: 5px;
+                justify-content: center;
+            }
+        
+            th, td, caption {
+                border: 1px solid #dddddd;
+                padding: 8px;
+                text-align: center;
+            }
+        
+            th {
+                background-color: #f2f2f2;
+            }
+        
+            tr:hover {
+                background-color: white;  /* Cambiar color al pasar el mouse sobre la fila */
+            }
+        
+            .user-item {
+                margin: 10px;  /* Margen alrededor de cada elemento de usuario */
+            }
+            
+
+        </style>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#" id="home-link">Accueil</a></li>
+            <li><a href="#" id="command-link">Mes demandes</a></li>
+        </ul>
+    </nav>
+
+    <div class="login-container-outer">
+        <div class="login-container" id="login-container">
+            <h1>Identifiez-vous!</h1>
+            <form onsubmit="return verificarInicioSesion()">
+                <label for="username">Identifiant:</label>
+                <input type="text" id="username" name="user" placeholder="Prenom" required>
+            
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password" name="password" placeholder="ex: 123">
+            
+                <button type="submit">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-content">
+        <h1>Commandes de Patients</h1>
+        <ul id="user-list"></ul>
+        <div id="no-demands-message">il n'y a pas de demande en cours</div>
+    </div>
+
+    <div id="command-content">
+        <h1>Medicaments demandes</h1>
+        <ul id="user-medicament-list">
+        </ul>
+    </div>
+
+    <!--Admin patient list-->
+    <div id="patient-content">
+        <h1>Patients</h1>
+        <ul id="patient-list">
+        </ul>
+    </div>
+
+    <!--Admin patient medicaments comandes-->
+    <div id="user-medication">
+        <h2>Medicaments commandes</h2>
+        <ul id="medication-list"></ul>
+    </div>
+    
+
+
+    <main id="home-content">
+        <div class="menu">
+            <div class="med">
+                <h2> Doliprane</h2>
+                <img src="doliprane.jpg" alt="doliprane.jpg">
+                <p>Le Doliprane est un medicament a base de paracetamol qui soulage la douleur, comme les maux de tête, et abaisse la fievre en inhibant les substances chimiques responsables de la douleur et de la fievre dans le cerveau.</p>
+                <div class="counter">
+                    <button class="adder" id="add-doliprane">+</button>
+                    <span id="counter-doliprane">0</span>
+                </div>
+            </div>
+            
+            <div class="med">
+                <h2> Tramadol</h2>
+                <img class="tramadol" src="tramadol.jpg" alt="tramadol.jpg">
+                <p>Le Tramadol est un medicament analgesique utilise pour soulager la douleur moderee a severe. Il agit en modifiant la façon dont le cerveau perçoit la douleur.</p>
+                <div class="counter">
+                    <button class="adder" id="add-tramadol">+</button>
+                    <span id="counter-tramadol">0</span>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button id="reset-counters" class="reseter">Reinitialiser</button>
+                <button id="reset-counters" class="commander">Commander</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p> SansT © 2023 </p>
+    </footer>
+
+
+
+    <script>
+        // Funciones para show/ocultar contenido
+        function showHome() {
+            document.getElementById('home-content').style.display = 'block';
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'none';
+            document.getElementById('command-content').style.display = 'none';
+            document.getElementById('patient-content').style.display = 'none';
+            document.getElementById('user-medication').style.display = 'none';
+            var linkMenu = document.getElementById('home-link');
+            linkMenu.style.backgroundColor = "rgb(0 0 0 / 15%)";
+            var linkMenu = document.getElementById('command-link');
+            linkMenu.style.backgroundColor = "#f0f0f0";
+
+            actualizarEstadoBotones();
+        }
+
+        function showLogin() {
+            document.getElementById('home-content').style.display = 'none';
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('admin-content').style.display = 'none';
+            document.getElementById('command-content').style.display = 'none';
+            document.getElementById('patient-content').style.display = 'none';
+            document.getElementById('user-medication').style.display = 'none';
+            document.getElementById('username').focus();
+        }
+
+        function showAdmin() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+            document.getElementById('home-content').style.display = 'none';
+            document.getElementById('command-content').style.display = 'none';
+            document.getElementById('patient-content').style.display = 'none';
+            document.getElementById('user-medication').style.display = 'none';
+            var linkMenu = document.getElementById('home-link');
+            linkMenu.style.backgroundColor = "rgb(0 0 0 / 15%)";
+            linkMenu.textContent = 'Mes demandes';
+            var linkMenu = document.getElementById('command-link');
+            linkMenu.style.backgroundColor = "#f0f0f0";
+            linkMenu.textContent = 'Mes patients';
+        }
+
+        function showDemandes(){
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'none';
+            document.getElementById('home-content').style.display = 'none';
+            document.getElementById('command-content').style.display = 'block';
+            document.getElementById('patient-content').style.display = 'none';
+            document.getElementById('user-medication').style.display = 'none';
+            var currentUser = usuarios.find(function (user) {
+                return user.username === document.getElementById('username').value;
+            });
+            var userMedicaments = document.getElementById('user-medicament-list')
+            showMedicament(currentUser, userMedicaments);
+        }
+
+        function showPatients(){
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'none';
+            document.getElementById('home-content').style.display = 'none';
+            document.getElementById('command-content').style.display = 'none';
+            document.getElementById('patient-content').style.display = 'block';
+            document.getElementById('user-medication').style.display = 'none';
+            showAllPatients();
+        }
+
+        // Agregar eventos a los enlaces
+        document.getElementById('home-link').addEventListener('click', function () {
+            var linkMenu = document.getElementById('home-link');
+            linkMenu.style.backgroundColor = "rgb(0 0 0 / 15%)";
+            var linkMenu = document.getElementById('command-link');
+            linkMenu.style.backgroundColor = "#f0f0f0";
+            if (isAdmin) {
+                showAdmin();
+            } else {
+                showHome();
+            }
+        });
+
+        document.getElementById('command-link').addEventListener('click', function () {
+            var linkMenu = document.getElementById('home-link');
+            linkMenu.style.backgroundColor = "#f0f0f0";
+            var linkMenu = document.getElementById('command-link');
+            linkMenu.style.backgroundColor = "rgb(0 0 0 / 15%)";
+            if (isAdmin) {
+                showPatients();
+            } else {
+                showDemandes();
+            }
+        });
+        
+
+        // Mostrar la vista inicial (Login)
+        showLogin();
+
+        // Definir una estructura de datos para almacenar usuarios
+        var usuarios = [
+            {
+                username: "999",
+                password: "123",
+                orders: [ { medicaments: { doliprane: 0, tramadol: 0 }, status: "En attente", nombre: 1 } ],
+                nRoom: ""
+            },
+            {
+                username: "Mike",
+                password: "123",
+                orders: [ { medicaments: { doliprane: 0, tramadol: 0 }, status: "En attente", nombre: 1} ],
+                nRoom: "1"
+            },
+            {
+                username: "Alex",
+                password: "123",
+                orders: [ { medicaments: { doliprane: 0, tramadol: 0 }, status: "En attente", nombre: 1 } ],
+                nRoom: "2"
+            }
+        ];
+
+        // Funcion para verificar el inicio de sesion
+        var logged = false;
+
+        // Funcion para verificar si el usuario es admin
+        var isAdmin = false;
+
+        // Agrega contadores y manejo de botones
+        var counterDoliprane = 0;
+        var counterTramadol = 0;
+
+        document.getElementById('home-link').style.display = 'none';
+        document.getElementById('command-link').style.display = 'none';
+
+        function verificarInicioSesion() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            // Verificar si las credenciales coinciden con los usuarios almacenados
+            var findUser = usuarios.find(function(user) {
+                return user.username === username && user.password === password;
+            });
+
+    
+
+            if (findUser) {
+                if (username === "999") {
+                    isAdmin = true;
+                    showAdmin();
+                }
+                else{
+                    showHome();
+                }
+                logged = true;
+                document.getElementById('logout-button').style.display = 'revert';
+                actualizarEstadoBotones();
+                document.getElementById('home-link').style.display = 'inline';
+                document.getElementById('command-link').style.display = 'inline';
+                showUserName(username);
+                return false;
+            } else {
+                alert("Identifiant et mot de passe incorrect");
+            }
+        }
+
+        function showUserName(username) {
+            // Muestra el nombre del usuario en el elemento con el id "user-welcome"
+            var userWelcome = document.getElementById('user-welcome');
+            var currentUser = usuarios.find(function (user) {
+                return user.username === username;
+            });
+        
+            // Crea un nuevo elemento span para cada línea
+            var span1 = document.createElement('span');
+            var span2 = document.createElement('span');
+            span2.classList.add("numChambre");
+
+            span1.style.fontWeight = 'bold';
+            span2.style.fontWeight = 'bold';
+        
+            // Asigna el contenido de cada span
+            span1.textContent = "Identifiant: " + username;
+            if(username !== "999"){
+                span2.textContent = "# de chambre: " + currentUser.nRoom;
+            }
+            else{
+                span2.textContent = "Infirmier"
+            }
+            // Agrega los spans al contenedor
+            userWelcome.innerHTML = '';
+            userWelcome.appendChild(span1);
+            userWelcome.appendChild(document.createElement('br')); // Agrega un salto de línea
+            userWelcome.appendChild(span2);
+        }
+        
+
+        function showUsers() {
+            var userList = document.getElementById('user-list');
+            var anyPatient = false;
+
+            // Limpiar la lista de usuarios antes de agregar nuevos usuarios
+            userList.innerHTML = '';
+            
+            // Generar y agregar elementos de lista para cada usuario
+            usuarios.forEach(function(user) {
+                //print all patients and avoid the admins
+                if(user.username == "999"){ 
+                    return;
+                }
+                var listItem = document.createElement('li');
+                listItem.classList.add('user-item');
+                // Verifica si el usuario tiene medicamentos solicitados
+                if (user.orders[0].medicaments.tramadol > 0 || user.orders[0].medicaments.doliprane > 0) {
+                    anyPatient = true;
+                    listItem.textContent = 'Patient: ' + user.username + ' - ';
+                    listItem.textContent += '\nMedicaments commandes:';
+                    // Agrega los medicamentos solicitados a la lista
+                    if (user.orders[0].medicaments.doliprane > 0) {
+                        listItem.textContent += '\n- Doliprane: ' + user.orders[0].medicaments.doliprane;
+                    }
+                    if (user.orders[0].medicaments.tramadol > 0) {
+                        listItem.textContent += '\n- Tramadol: ' + user.orders[0].medicaments.tramadol;
+                    }
+
+                    // Agrega un boton para restablecer los medicamentos de este usuario
+                    var acceptButton = document.createElement('button');
+                    acceptButton.textContent = 'Accepter';
+                    acceptButton.classList.add('accept-button');
+                    acceptButton.addEventListener('click', function () {
+                        // Crear una nueva orden y colocarla al principio de la lista
+                        var tramadolAmount = user.orders[0].medicaments.tramadol;
+                        var dolipraneAmount = user.orders[0].medicaments.doliprane;
+
+                        var url ="";
+
+                        if (dolipraneAmount > 0) {
+                            url +=dolipraneAmount.toString() +"d";
+                        }
+
+                        if (tramadolAmount > 0){
+                            url +=tramadolAmount.toString() +"t";
+                        }
+
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.open("GET", url, true);
+                        xhttp.send();
+
+                        var numOrder = user.orders[0].nombre +1;
+                        var newOrder = { medicaments: { doliprane: 0, tramadol: 0 }, status: "En attente", nombre: numOrder };
+                        user.orders.unshift(newOrder);
+                        
+                        // Cambiar el estado de la orden actual a "accepted"
+                        user.orders[1].status = "Acceptee";
+                        
+                        
+                        alert("Les medicaments ont ete acceptes");
+                        
+                        // Actualizar la vista de usuarios
+                        showUsers();
+                    });
+                
+                    var rejectButton = document.createElement('button');
+                    rejectButton.textContent = 'Refuser';
+                    rejectButton.classList.add('reject-button');
+                    rejectButton.addEventListener('click', function () {
+                        // Crear una nueva orden y colocarla al principio de la lista
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.open("GET", "off", true);
+                        xhttp.send();
+                        var numOrder = user.orders[0].nombre +1;
+                        var newOrder = { medicaments: { doliprane: 0, tramadol: 0 }, status: "En attente", nombre: numOrder };
+                        user.orders.unshift(newOrder);
+                        
+                        // Cambiar el estado de la orden actual a "rejected"
+                        user.orders[1].status = "Refusee";
+                        
+                        alert("Les medicaments ont ete refuses");
+                        
+                        // Actualizar la vista de usuarios
+                        showUsers();
+                    });
+                    listItem.appendChild(acceptButton);
+                    listItem.appendChild(rejectButton);
+                    userList.appendChild(listItem);
+                }
+            });
+            if (!anyPatient){
+                document.getElementById('no-demands-message').style.display = "block";
+            }
+            else{
+                document.getElementById('no-demands-message').style.display = "none";
+            }
+        }
+
+        function showAllPatients() {
+            var userList = document.getElementById('patient-list');
+        
+            // Limpiar la lista de usuarios antes de agregar nuevos usuarios
+            userList.innerHTML = '';
+        
+            usuarios.forEach(function(user) {
+                if (user.username !== "999") {
+                    var listItem = document.createElement('li');
+                    listItem.classList.add('user-item');
+                    listItem.textContent = 'Patient: ' + user.username;
+        
+                    // Agrega evento de clic al usuario
+                    listItem.addEventListener('click', function() {
+                        showMedicament(user, listItem);
+                    });
+        
+                    userList.appendChild(listItem);
+                }
+            });
+        }
+        
+        function showMedicament(user, listItem) {
+            // Crear la tabla
+            var table = document.createElement('table');
+            var caption = document.createElement('caption');
+            caption.textContent = user.username;
+            table.appendChild(caption);
+        
+            var thead = document.createElement('thead');
+            var tbody = document.createElement('tbody');
+        
+            // Crear la fila de encabezado
+            var headerRow = document.createElement('tr');
+            var headers = ['Commande N°', 'Doliprane', 'Tramadol', 'Status'];
+            headers.forEach(function (headerText) {
+                var header = document.createElement('th');
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+            thead.appendChild(headerRow);
+        
+            // Recorrer todas las ordenes del usuario
+            user.orders.forEach(function (order) {
+                var dataRow = document.createElement('tr');
+                var orderNumber = order.nombre; // Número de la orden
+                var medications = order.medicaments;
+                var status = order.status;
+        
+                var dataCells = [
+                    orderNumber,
+                    medications.doliprane,
+                    medications.tramadol,
+                    status
+                ];
+        
+                dataCells.forEach(function (cellText) {
+                    var cell = document.createElement('td');
+                    cell.textContent = cellText;
+                    dataRow.appendChild(cell);
+                });
+        
+                // Add this check to only append the row if either doliprane or tramadol value is greater than 0
+                if (medications.doliprane > 0 || medications.tramadol > 0) {
+                    tbody.appendChild(dataRow);
+                }
+            });
+        
+            // Agregar las partes de la tabla
+            table.appendChild(thead);
+            table.appendChild(tbody);
+        
+            // Reemplazar el contenido del listItem con la tabla
+            listItem.innerHTML = '';
+            listItem.appendChild(table);
+        }
+        
+        // Funcion para mostrar los medicamentos del usuario
+        function mostrarMedicamentos(user) {
+            // Obten el contenedor de la lista de medicamentos
+            var medicationListContainer = document.getElementById('medication-list');
+            
+            // Limpia el contenido anterior
+            medicationListContainer.innerHTML = '';
+
+            // Crea y agrega elementos de lista para cada medicamento
+            for (var medicament in user.orders[0].medicaments) {
+                if (user.orders[0].medicaments.hasOwnProperty(medicament)) {
+                    var cantidad = user.orders[0].medicaments[medicament];
+
+                    var listItem = document.createElement('li');
+                    listItem.textContent = medicament + ': ' + cantidad;
+
+                    medicationListContainer.appendChild(listItem);
+                }
+            }
+
+            // Muestra la vista de medicamentos
+            document.getElementById('user-medication').style.display = 'block';
+        }
+
+        
+        function deconnecter() {
+            // Restablece el estado de la aplicacion para show la vista de inicio de sesion
+            showLogin();
+        
+            // Tambien podrías restablecer cualquier otra informacion relacionada con la sesion
+            // como reiniciar contadores, ocultar informacion del usuario actual, etc.
+        
+            // Restablece la variable de sesion
+            logged = false;
+            isAdmin = false;
+            document.getElementById('logout-button').style.display = 'none';
+            document.getElementById('home-link').style.display = 'none';
+            document.getElementById('command-link').style.display = 'none';
+            // Limpia el nombre del usuario en el encabezado
+            document.getElementById('user-welcome').textContent = '';
+        
+            var linkMenu = document.getElementById('home-link');
+            linkMenu.textContent = 'Accueil';
+            var linkMenu = document.getElementById('command-link');
+            linkMenu.textContent = 'Mes demandes';
+            document.getElementById('username').value =  "";
+            document.getElementById('password').value = "";
+            document.getElementById('username').focus();
+        }
+               
+    
+        // Llama a la funcion para show la lista de usuarios cuando la pagina se cargue
+        window.addEventListener('load', showUsers);
+
+        
+        document.getElementById('add-doliprane').addEventListener('click', function() {
+            counterDoliprane++;
+            document.getElementById('counter-doliprane').textContent = counterDoliprane;
+        });
+
+        document.getElementById('add-tramadol').addEventListener('click', function() {
+            counterTramadol++;
+            document.getElementById('counter-tramadol').textContent = counterTramadol;
+        });
+
+        document.getElementById('reset-counters').addEventListener('click', function() {
+            counterDoliprane = 0;
+            counterTramadol = 0;
+            document.getElementById('counter-doliprane').textContent = counterDoliprane;
+            document.getElementById('counter-tramadol').textContent = counterTramadol;
+        });    
+
+
+        
+        function resetMedications(user) {
+            // Restablecer medicamentos para el usuario dado
+            user.orders[0].medicaments = { doliprane: 0, tramadol: 0 };
+            // Volver a show la lista de usuarios despues del restablecimiento
+            showUsers();
+        }
+
+        function actualizarEstadoBotones() {
+            // Obten todos los botones que deseas desactivar
+            var botones = document.querySelectorAll('.accept-button, .reject-button, .commander, .adder, .reseter');
+        
+            // Itera sobre los botones y establece su estado según la variable logged
+            botones.forEach(function (boton) {
+                boton.disabled = !logged;
+            });
+        }
+
+        document.querySelector('.commander').addEventListener('click', function() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "p", true);
+            xhttp.send();
+            var quantityDoliprane = counterDoliprane;
+            var quantityTramadol = counterTramadol;
+
+            var usuarioActual = usuarios.find(function(user) {
+                return user.username === document.getElementById('username').value;
+            });
+        
+            var message = "Vous avez commande:\n";
+            if (quantityDoliprane > 0) {
+                message += quantityDoliprane + " Doliprane\n";
+            }
+            if (quantityTramadol > 0) {
+                message += quantityTramadol + " Tramadol\n";
+            }
+        
+            if (quantityDoliprane === 0 && quantityTramadol === 0) {
+                message = "Aucun medicament selectionne.";
+            }
+            usuarioActual.orders[0].medicaments.doliprane += counterDoliprane;
+            usuarioActual.orders[0].medicaments.tramadol += counterTramadol;
+            counterDoliprane = 0;
+            counterTramadol = 0;
+            document.getElementById('counter-doliprane').textContent = counterDoliprane;
+            document.getElementById('counter-tramadol').textContent = counterTramadol;
+        
+            alert(message);
+            showUsers();
+        });
+    </script>
+</body> 
+</html>
